@@ -1,14 +1,17 @@
 import Link from "next/link";
 
-const links = [{ label: "projects", href: "/projects" }];
+const links = [
+  { label: "blog", href: "/blog" },
+  { label: "projects", href: "/projects" },
+];
 
 export default function Header() {
   return (
     <div className="flex items-center justify-between">
       <div>
-        <a className="text-lg font-bold" href="/">
+        <Link className="text-lg font-bold" href="/">
           @melvinotieno
-        </a>
+        </Link>
       </div>
 
       <div>
