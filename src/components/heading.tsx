@@ -5,7 +5,8 @@ import { useEffect, useState } from "react";
 export default function Heading({
   animate,
   inaminate,
-}: Readonly<{ animate: string; inaminate?: string }>) {
+  className = "mb-12",
+}: Readonly<{ animate: string; inaminate?: string; className?: string }>) {
   const [animated, setAnimated] = useState(inaminate ? "" : animate.charAt(0));
 
   useEffect(() => {
@@ -27,7 +28,7 @@ export default function Heading({
   }, [animate, inaminate]);
 
   return (
-    <h1 className="font-mono text-3xl font-bold">
+    <h1 className={`font-mono text-3xl font-bold ${className}`}>
       {inaminate} {animated}
     </h1>
   );
