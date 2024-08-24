@@ -1,4 +1,5 @@
 .next
+*.mdx
 node_modules
 public
 pnpm-lock.yaml
