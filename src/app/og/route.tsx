@@ -1,8 +1,10 @@
 import { ImageResponse } from "next/og";
 
+import { AUTHOR_NAME } from "@/utilities/constants";
+
 export function GET(request: Request) {
   const url = new URL(request.url);
-  const title = url.searchParams.get("title") || "Melvin Otieno";
+  const title = url.searchParams.get("title") || AUTHOR_NAME;
 
   return new ImageResponse(
     (

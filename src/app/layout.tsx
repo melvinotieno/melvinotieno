@@ -4,7 +4,7 @@ import { GeistMono } from "geist/font/mono";
 import { GeistSans } from "geist/font/sans";
 import type { Metadata } from "next";
 
-import { BASE_URL } from "@/utilities/constants";
+import { AUTHOR_NAME, BASE_URL, TWITTER_HANDLE } from "@/utilities/constants";
 
 import Footer from "./footer";
 import Header from "./header";
@@ -14,20 +14,19 @@ import "./globals.css";
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
-    default: "Melvin Otieno",
-    template: "%s | Melvin Otieno",
+    default: AUTHOR_NAME,
+    template: `%s | ${AUTHOR_NAME}`,
   },
   description: "Software Developer with a passion for building things.",
-  authors: [{ name: "Melvin Otieno", url: BASE_URL }],
+  authors: [{ name: AUTHOR_NAME, url: BASE_URL }],
   keywords: ["software", "developer", "melvin", "otieno"],
   openGraph: {
     type: "website",
     url: BASE_URL,
-    siteName: "Melvin Otieno",
-    locale: "en_US",
+    siteName: AUTHOR_NAME,
   },
   twitter: {
-    site: "@o_melvinotieno",
+    site: TWITTER_HANDLE,
   },
   robots: {
     index: true,
@@ -35,6 +34,9 @@ export const metadata: Metadata = {
     googleBot: {
       index: true,
       follow: true,
+      "max-snippet": -1,
+      "max-video-preview": -1,
+      "max-image-preview": "standard",
     },
   },
 };
