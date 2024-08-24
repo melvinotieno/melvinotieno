@@ -3,11 +3,12 @@ import Link from "next/link";
 
 import Heading from "@/components/heading";
 import { getBlogPosts } from "@/utilities/blog";
+import { BLOG_DESCRIPTION } from "@/utilities/constants";
 import { formatDate } from "@/utilities/date";
 
 export const metadata: Metadata = {
   title: "Blog",
-  description: "My thoughts on technology, software development, and more.",
+  description: BLOG_DESCRIPTION,
   keywords: ["blog", "technology", "software", "development"],
 };
 
