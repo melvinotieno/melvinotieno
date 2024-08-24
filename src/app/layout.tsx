@@ -4,19 +4,39 @@ import { GeistMono } from "geist/font/mono";
 import { GeistSans } from "geist/font/sans";
 import type { Metadata } from "next";
 
+import { BASE_URL } from "@/utilities/constants";
+
 import Footer from "./footer";
 import Header from "./header";
 
 import "./globals.css";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(BASE_URL),
   title: {
     default: "Melvin Otieno",
     template: "%s | Melvin Otieno",
   },
   description: "Software Developer with a passion for building things.",
-  authors: [{ name: "Melvin Otieno", url: "https://melvinotieno.com" }],
+  authors: [{ name: "Melvin Otieno", url: BASE_URL }],
   keywords: ["software", "developer", "melvin", "otieno"],
+  openGraph: {
+    type: "website",
+    url: BASE_URL,
+    siteName: "Melvin Otieno",
+    locale: "en_US",
+  },
+  twitter: {
+    site: "@o_melvinotieno",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+    },
+  },
 };
 
 export default function RootLayout({
