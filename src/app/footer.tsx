@@ -1,4 +1,5 @@
 import Icons from "@/components/icons";
+import { AUTHOR_NAME } from "@/utilities/constants";
 
 const links = [
   {
@@ -13,13 +14,17 @@ const links = [
     icon: Icons.GitHub,
     href: "https://github.com/melvinotieno",
   },
+  {
+    icon: Icons.RSS,
+    href: "/rss",
+  },
 ];
 
 export default function Footer() {
   return (
     <div className="item-center flex justify-between">
       <div className="text-zinc-500">
-        Melvin Otieno &copy; {new Date().getFullYear()}
+        {AUTHOR_NAME} &copy; {new Date().getFullYear()}
       </div>
 
       <div className="flex flex-row items-center space-x-4">
