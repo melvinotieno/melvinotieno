@@ -1,13 +1,29 @@
-import Mdx from "@/components/mdx";
+import MDX from "@/components/mdx";
+import { AUTHOR_NAME, BASE_URL, TWITTER_HANDLE } from "@/utilities/constants";
+import { resolveImage } from "@/utilities/image";
 
 export const metadata = {
   title: "Media Saver Privacy Policy",
   description: "Learn about the practices regarding the collection, use, and disclosure of personal information in the Media Saver app.",
   keywords: ["media saver", "privacy policy", "personal information", "data collection", "data use", "data disclosure"],
+  openGraph: {
+    type: "article",
+    publishedTime: "2024-09-01",
+    url: `${BASE_URL}/projects/mediasaver/privacy-policy`,
+    authors: AUTHOR_NAME,
+    section: "Privacy Policy",
+    tags: ["Media Saver", "Privacy Policy"],
+    images: [{ url: resolveImage("Media Saver Privacy Policy") }]
+  },
+  twitter: {
+    card: "summary_large_image",
+    creator: TWITTER_HANDLE,
+    images: [resolveImage("Media Saver Privacy Policy")]
+  },
 };
 
 export default function MDXPage({ children }) {
-  return <Mdx>{children}</Mdx>;
+  return <MDX>{children}</MDX>;
 }
 
 ## Media Saver Privacy Policy
