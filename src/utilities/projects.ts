@@ -63,3 +63,14 @@ export async function getProjects(slugs: boolean = false): Promise<Project[]> {
     Promise.resolve([] as Project[]),
   );
 }
+
+export async function getPaginatedProjects(
+  page: number,
+  limit: number,
+): Promise<{ projects: Project[]; total: number }> {
+  const projects = await getProjects();
+
+  const paginated = projects.slice((page - 1) * limit, page * limit);
+
+  return { projects: paginated, total: projects.length };
+}

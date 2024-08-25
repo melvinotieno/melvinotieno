@@ -2,7 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import Heading from "@/components/heading";
-import { getProjects } from "@/utilities/projects";
+import Paginator from "@/components/paginator";
+import { getPaginatedProjects } from "@/utilities/projects";
+
+const PAGINATOR_LIMIT = 10;
 
 export const metadata: Metadata = {
   title: "Projects",
@@ -10,8 +13,14 @@ export const metadata: Metadata = {
   keywords: ["projects", "software", "development"],
 };
 
-export default async function Page() {
-  const projects = await getProjects();
+export default async function Page({
+  searchParams,
+}: Readonly<{
+  searchParams: { [key: string]: string | string[] | undefined };
+}>) {
+  const page = parseInt(searchParams.page as string, 10) || 1;
+
+  const { projects, total } = await getPaginatedProjects(page, PAGINATOR_LIMIT);
 
   return (
     <>
@@ -40,6 +49,16 @@ export default async function Page() {
           ))}
         </ul>
       </div>
+
+      <Paginator
+        list={{
+          slug: "projects",
+          page: page,
+          total: total,
+          limit: PAGINATOR_LIMIT,
+        }}
+        className="mt-12"
+      />
     </>
   );
 }

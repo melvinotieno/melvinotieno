@@ -133,3 +133,14 @@ export async function getAdjacentBlogPosts(
     },
   };
 }
+
+export async function getPaginatedBlogPosts(
+  page: number,
+  limit: number,
+): Promise<{ posts: BlogPost[]; total: number }> {
+  const posts = await getBlogPosts();
+
+  const paginated = posts.slice((page - 1) * limit, page * limit);
+
+  return { posts: paginated, total: posts.length };
+}
