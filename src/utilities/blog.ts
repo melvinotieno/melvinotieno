@@ -1,6 +1,8 @@
 import { promises as fs } from "fs";
 import path from "path";
 
+import { PagePaginator } from "@/interfaces/paginator";
+
 type Metadata = {
   title: string;
   publishedAt: string;
@@ -114,12 +116,20 @@ export async function getBlogPost(slug: string): Promise<BlogPost | null> {
 
 export async function getAdjacentBlogPosts(
   slug: string,
-): Promise<{ prev: BlogPost | null; next: BlogPost | null }> {
+): Promise<PagePaginator> {
   const posts = await getBlogPosts();
   const currentIndex = posts.findIndex((post) => post.slug === slug);
+  const prev = posts[currentIndex + 1];
+  const next = posts[currentIndex - 1];
 
   return {
-    prev: currentIndex > 0 ? posts[currentIndex - 1] : null,
-    next: currentIndex < posts.length - 1 ? posts[currentIndex + 1] : null,
+    prev: prev && {
+      link: `/blog/${prev.slug}`,
+      title: prev.metadata.title,
+    },
+    next: next && {
+      link: `/blog/${next.slug}`,
+      title: next.metadata.title,
+    },
   };
 }
