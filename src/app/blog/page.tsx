@@ -19,7 +19,7 @@ export default async function Page() {
     <>
       <Heading animate="Blog" />
 
-      <div className="prose prose-p:font-mono prose-p:text-sm prose-p:m-0 prose-li:my-4">
+      <div className="prose prose-p:m-0 prose-p:font-mono prose-p:text-sm prose-li:my-4">
         <ul>
           {posts.map((post) => (
             <li key={post.slug}>
