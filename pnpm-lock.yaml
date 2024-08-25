@@ -32,6 +32,9 @@ importers:
       next-mdx-remote:
         specifier: ^5.0.0
         version: 5.0.0(@types/react@18.3.4)(react@19.0.0-rc-f994737d14-20240522)
+      prismjs:
+        specifier: ^1.29.0
+        version: 1.29.0
       react:
         specifier: 19.0.0-rc-f994737d14-20240522
         version: 19.0.0-rc-f994737d14-20240522
@@ -51,6 +54,9 @@ importers:
       '@types/node':
         specifier: ^20.16.1
         version: 20.16.1
+      '@types/prismjs':
+        specifier: ^1.26.4
+        version: 1.26.4
       '@types/react':
         specifier: ^18.3.4
         version: 18.3.4
@@ -466,6 +472,9 @@ packages:
 
   '@types/node@20.16.1':
     resolution: {integrity: sha512-zJDo7wEadFtSyNz5QITDfRcrhqDvQI1xQNQ0VoizPjM/dVAODqqIUWbJPkvsxmTI0MYRGRikcdjMPhOssnPejQ==}
+
+  '@types/prismjs@1.26.4':
+    resolution: {integrity: sha512-rlAnzkW2sZOjbqZ743IHUhFcvzaGbqijwOu8QZnZCjfQzBqFE3s4lOTJEsxikImav9uzz/42I+O7YUs1mWgMlg==}
 
   '@types/prop-types@15.7.12':
     resolution: {integrity: sha512-5zvhXYtRNRluoE/jAp4GVsSduVUzNWKkOZrCDBWYtE7biZywwdC2AcEzg+cSMLFRfVgeAFqpfNabiPjxFddV1Q==}
@@ -1998,6 +2007,10 @@ packages:
     engines: {node: '>=14'}
     hasBin: true
 
+  prismjs@1.29.0:
+    resolution: {integrity: sha512-Kx/1w86q/epKcmte75LNrEoT+lX8pBpavuAbvJWRXar7Hz8jrtF+e3vY751p0R8H9HdArwaCTNDDzHg/ScJK1Q==}
+    engines: {node: '>=6'}
+
   prop-types@15.8.1:
     resolution: {integrity: sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==}
 
@@ -2874,6 +2887,8 @@ snapshots:
   '@types/node@20.16.1':
     dependencies:
       undici-types: 6.19.8
+
+  '@types/prismjs@1.26.4': {}
 
   '@types/prop-types@15.7.12': {}
 
@@ -4775,6 +4790,8 @@ snapshots:
       '@trivago/prettier-plugin-sort-imports': 4.3.0(prettier@3.3.3)
 
   prettier@3.3.3: {}
+
+  prismjs@1.29.0: {}
 
   prop-types@15.8.1:
     dependencies:
