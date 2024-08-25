@@ -55,7 +55,7 @@ export default function RootLayout({
           </Container>
         </header>
 
-        <main className="my-12 flex-1">
+        <main className="relative my-12 flex-1">
           <Container>{children}</Container>
         </main>
 
@@ -81,7 +81,7 @@ function Container({
   return (
     <div className="sm:px-8">
       <div className="mx-auto max-w-7xl lg:px-8">
-        <div className="relative px-4 sm:px-8 lg:px-12">
+        <div className="px-4 sm:px-8 lg:px-12">
           <div className="mx-auto max-w-2xl lg:max-w-2xl">{children}</div>
         </div>
       </div>
