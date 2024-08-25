@@ -1,4 +1,4 @@
-import type { Metadata, ResolvedMetadata } from "next";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import Heading from "@/components/heading";
@@ -13,15 +13,12 @@ type Props = {
   params: { slug: string };
 };
 
-export async function generateMetadata(
-  { params }: Props,
-  _: ResolvedMetadata,
-): Promise<Metadata | undefined> {
+export async function generateMetadata({
+  params,
+}: Readonly<Props>): Promise<Metadata | undefined> {
   const post = await getBlogPost(params.slug);
 
-  if (!post) {
-    return;
-  }
+  if (!post) return;
 
   const { title, publishedAt, description, keywords, image } = post.metadata;
 
@@ -47,12 +44,10 @@ export async function generateMetadata(
   };
 }
 
-export default async function Blog({ params }: Props) {
+export default async function Blog({ params }: Readonly<Props>) {
   const post = await getBlogPost(params.slug);
 
-  if (!post) {
-    notFound();
-  }
+  if (!post) return notFound();
 
   const { metadata, content } = post;
   const { title, publishedAt, description, image } = metadata;
