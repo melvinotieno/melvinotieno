@@ -8,7 +8,7 @@ export default function Heading({
   className = "mb-12",
 }: Readonly<{ animate?: string; inanimate?: string; className?: string }>) {
   const [animated, setAnimated] = useState(
-    inanimate ? "" : animate?.charAt(0) || "",
+    inanimate ? "" : (animate?.charAt(0) ?? ""),
   );
 
   useEffect(() => {

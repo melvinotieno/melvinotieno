@@ -4,7 +4,7 @@ import { AUTHOR_NAME } from "@/utilities/constants";
 
 export function GET(request: Request) {
   const url = new URL(request.url);
-  const title = url.searchParams.get("title") || AUTHOR_NAME;
+  const title = url.searchParams.get("title") ?? AUTHOR_NAME;
 
   return new ImageResponse(
     (

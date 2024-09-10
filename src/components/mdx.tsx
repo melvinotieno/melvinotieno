@@ -13,7 +13,7 @@ export default function MDX({
   children?: React.ReactNode;
 }>) {
   return (
-    <div className={`prose${className ? ` ${className}` : ""}`}>
+    <div className={`prose${className ? " " + className : ""}`}>
       {content ? (
         <MDXRemote source={content} components={{ ...MDXComponents }} />
       ) : (
