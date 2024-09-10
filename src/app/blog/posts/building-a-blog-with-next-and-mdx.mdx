@@ -1,0 +1,237 @@
+---
+title: 'Building a blog with Next.js and MDX'
+publishedAt: '2024-09-11'
+description: 'A tutorial on building a blog with Next.js and MDX.'
+keywords: 'Next.js, MDX, blog, tutorial'
+---
+
+Building dynamic, content-driven websites is easier than ever with [Next.js](https://nextjs.org). Using it with [MDX](https://mdxjs.com) offers an excellent solution for content management, making it particularly suitable for blogs due to its simplicity and flexibility.
+
+This tutorial will guide you through setting up a blog using Next.js and MDX. I'll use my own blog, built with these technologies, as an example. You can find the source code [here](https://github.com/melvinotieno/melvinotieno).
+
+### Initial setup
+
+Assuming that you have a Next.js project already set up, install the necessary dependencies:
+
+```bash
+npm install next-mdx-remote
+```
+
+Next, we need to follow a certain convention for which I used the following directory structure:
+
+```text
+src
+└── app
+    └── blog
+        └── [slug]
+            ├── page.tsx
+        └── posts
+            ├── building-a-blog-with-next-and-mdx.mdx
+            ├── ...
+        ├── page.tsx
+```
+
+The `blog/page.tsx` file will be the main blog page, listing all the posts. The `blog/[slug]/page.tsx` file will be the post page. The `blog/posts` directory will contain all the posts, the file name being the slug of the post.
+
+Each post should have the following front matter:
+
+```text
+---
+title: 'Building a blog with Next.js and MDX'
+publishedAt: '2021-01-01'
+---
+```
+
+The rest of the file will be the content of the post in MDX format.
+
+### Parsing MDX files
+
+To parse the MDX files, we need to create a function that reads the file, extracts the front matter, and returns the blog post in form of an object:
+
+```ts
+type Metadata = {
+  title: string;
+  publishedAt: string;
+};
+
+type BlogPost = {
+  slug: string;
+  metadata: Metadata;
+  content: string;
+};
+```
+
+We can use the following function (created in `src/utilities/blog.ts`) to parse an MDX file:
+
+```ts
+import { promises as fs } from "fs";
+import path from "path";
+
+async function readBlogFile(filePath: string): Promise<BlogPost | null> {
+  try {
+    const fileContent = await fs.readFile(filePath, { encoding: "utf-8" });
+    const regex = /---\s*([\s\S]*?)\s*---/;
+    const match = regex.exec(fileContent);
+
+    if (!match) {
+      // Return null if the frontmatter is not found.
+      return null;
+    }
+
+    const frontmatter = match[1].trim().split("\n");
+
+    // Generate the slug from the file name.
+    const slug = path.basename(filePath, path.extname(filePath));
+
+    // Parse the frontmatter into a metadata object.
+    const metadata = frontmatter.reduce((acc, line) => {
+      const [key, ...valueArr] = line.split(":");
+
+      // Join the value array, trim it, and remove any surrounding quotes.
+      let value = valueArr.join(":").trim();
+      value = value.replace(/^['"](.*)['"]$/, "$1");
+
+      return {
+        ...acc,
+        [key.trim() as keyof Metadata]: value,
+      };
+    }, {} as Metadata);
+
+    // Get the blog post content by removing the frontmatter.
+    const content = fileContent.replace(regex, "").trim();
+
+    return { slug, metadata, content };
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+}
+```
+
+In the function above, we read the file content, extract the front matter, and parse it into a metadata object. We then remove the front matter from the file content to get the actual post content.
+
+### Listing posts
+
+To list all the posts, we need to read all the files in the `blog/posts` directory and parse them using the function we created earlier. We can use the following function to do this:
+
+```ts
+export async function getBlogPosts(): Promise<BlogPost[]> {
+  const dir = path.join(process.cwd(), "src/app/blog/posts");
+  
+  try {
+    const files = (await fs.readdir(dir)).filter(
+      (file) => path.extname(file) === ".mdx",
+    );
+
+    const posts: BlogPost[] = [];
+
+    for (const file of files) {
+      const filePath = path.join(dir, file);
+      const post = await readBlogFile(filePath);
+
+      // We only push the post if it's not null.
+      if (post) posts.push(post);
+    }
+
+    // Sort posts by publishedAt date in descending order.
+    posts.sort(
+      (a, b) =>
+        new Date(b.metadata.publishedAt).getTime() -
+        new Date(a.metadata.publishedAt).getTime(),
+    );
+
+    return posts;
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+}
+```
+
+We can then use the `getBlogPosts` function in the `blog/page.tsx` file to list all the posts.
+
+```tsx
+import Link from "next/link";
+import { getBlogPosts } from "@/utilities/blog";
+
+export default async function Page() {
+  const posts = await getBlogPosts();
+
+  return (
+    <div>
+      <h1>Blog</h1>
+      <ul>
+        {posts.map((post) => (
+          <li key={post.slug}>
+            <Link href={`/blog/${post.slug}`}>
+              <a>{post.metadata.title}</a>
+            </Link>
+
+            <p>{post.metadata.publishedAt}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+```
+
+### Displaying a post
+
+To display a post, we need to read the file for the given slug and parse it using the function we created earlier. We can use the following function to do this:
+
+```ts
+export async function getBlogPost(slug: string): Promise<BlogPost | null> {
+  const filePath = path.join(process.cwd(), `src/app/blog/posts/${slug}.mdx`);
+  return readBlogFile(filePath);
+}
+```
+
+We can then use the `getBlogPost` function in the `blog/[slug]/page.tsx` file to display the post.
+
+```tsx
+import { notFound } from "next/navigation";
+import { MDXRemote } from "next-mdx-remote/rsc";
+import { getBlogPost } from "@/utilities/blog";
+
+export async function Blog({ params }: { params: { slug: string } }) {
+  const post = await getBlogPost(params.slug);
+
+  if (!post) {
+    return notFound();
+  }
+
+  return (
+    <div>
+      <h1>{post.metadata.title}</h1>
+      <p>{post.metadata.publishedAt}</p>
+      <MDXRemote source={post.content} />
+    </div>
+  );
+}
+```
+
+To render the MDX content, we need to use the `MDXRemote` component from `next-mdx-remote`. This component takes the MDX content as a prop and renders it.
+
+We can also dynamically generate the blog post metadata as follows:
+
+```tsx
+import { getBlogPost } from "@/utilities/blog";
+
+export async function generateMetadata({ params }: { params: { slug: string } }) {
+  const post = await getBlogPost(params.slug);
+
+  if (!post) return;
+
+  return {
+    title: post.metadata.title,
+    publishedAt: post.metadata.publishedAt,
+  };
+}
+```
+
+### Conclusion
+
+In this tutorial, we've seen how to set up a basic blog using Next.js and MDX. We've created functions to parse MDX files, list all the posts, and display a single post. This setup allows for a flexible and content-driven blog that can be easily extended and customized.
+
+Check out the [Github repository](https://github.com/melvinotieno/melvinotieno) for the complete source code of this site. The repository is more complex than what we've covered here (includes pagination among other functionalities), but it should give you a good starting point for building your own blog with Next.js and MDX. Feel free to explore and modify it to suit your needs. Happy coding!
