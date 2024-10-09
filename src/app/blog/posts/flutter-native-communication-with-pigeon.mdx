@@ -1,0 +1,218 @@
+---
+title: 'Flutter native communication with Pigeon'
+publishedAt: '2024-10-09'
+description: 'Learn how to use Pigeon for seamless native communication in Flutter. This guide also covers pigeon_generator package that integrates pigeon with build_runner.'
+keywords: 'Flutter, Flutter Pigeon, Pigeon, pigeon_generator, build_runner, Flutter native communication'
+---
+
+Flutter is an incredibly powerful and versatile framework for building cross-platform applications. One of its standout features is the ability to communicate with platform-specific (native) code using platform channels. This allows developers to tap into features provided by the native platform that may not have been directly exposed in Flutter.
+
+When dealing with native communication, maintaining a clean and structured codebase can sometimes be a challenge, especially if the communication becomes complex. This is where Pigeon comes in. Pigeon is a code generator that simplifies and automates Flutter's platform channel setup by generating type-safe code for both the Dart and native sides of communication.
+
+### Benefits of using Pigeon
+
+- Type safety: Both Dart and native code are strongly typed, reducing the likelihood of runtime errors.
+- Boilerplate reduction: Automatically generates the required Dart, Java/Kotlin, and Objective-C/Swift code.
+- Simplified maintenance: The generated code follows the same structure, making it easier to manage.
+
+### Setting up Pigeon in Flutter
+
+Let&apos;s walk through the steps to set up and use Pigeon for native communication.
+
+#### Step 1: Add Pigeon as a dependency
+
+Add [Pigeon](https://pub.dev/packages/pigeon) to your `dev_dependencies` in the `pubspec.yaml` file:
+
+```yaml
+dev_dependencies:
+  pigeon: [version]
+```
+
+Then, run `flutter pub get` to install the package.
+
+#### Step 2: Define a Pigeon file
+
+Pigeon requires you to define the communication interface in a Dart file. This is where you specify the methods and data types that will be shared between Dart and the native platforms. Flutter recommends to create a pigeon file in the `pigeons` folder at the root of your project.
+
+Create a file named pigeon.dart (or any other name), and inside this file, define the classes and methods that will be used for communication:
+
+```dart
+import 'package:pigeon/pigeon.dart';
+
+class Request {
+  int? input;
+}
+
+class Response {
+  int? result;
+}
+
+@HostApi()
+abstract class CalculatorApi {
+  Response calculate(Request request);
+}
+```
+
+In this example:
+
+- We define two classes (`Request` and `Response`) to represent the data we’ll be passing.
+- We define an interface `CalculatorApi` annotated with `@HostApi()` to indicate that this is the API that will be implemented on the native side.
+
+#### Step 3: Generate the code
+
+You can generate the platform-specific code using the Pigeon tool. Run the following command:
+
+```bash
+dart run pigeon \
+  --input pigeons/pigeon.dart \
+  --dart_out lib/pigeon.g.dart \
+  --kotlin_out android/app/src/main/kotlin/com/example/app/Pigeon.g.kt \
+  --kotlin_package "com.example.app" \
+  --swift_out ios/Runner/Pigeon.g.swift
+```
+
+This will create:
+
+- pigeon.g.dart in the Flutter lib folder for Dart code.
+- Pigeon.g.kt in the Android project for Kotlin code.
+- Pigeon.g.swift in the iOS project for Swift code.
+
+#### Step 4: Implement native code
+
+#### Android (Kotlin)
+
+Register the API in your `MainActivity.kt`:
+
+```kotlin
+package com.example.app
+
+import io.flutter.embedding.android.FlutterActivity
+import io.flutter.embedding.engine.FlutterEngine
+import com.example.app.Pigeon
+
+class MainActivity : FlutterActivity() {
+  override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
+    super.configureFlutterEngine(flutterEngine)
+
+    CalculatorApi.setUp(flutterEngine.dartExecutor.binaryMessenger, object : CalculatorApi {
+      override fun calculate(request: Request): Response {
+        val response = Pigeon.Response()
+        response.result = request.input?.times(2)  // Example: multiply input by 2
+        return response
+      }
+    })
+  }
+}
+```
+
+#### iOS (Swift)
+
+Register the API in your `AppDelegate.swift`:
+
+```swift
+import Flutter
+import UIKit
+
+private class CalculatorApiImpl: CalculatorApi {
+  func calculate(request: Request) -> Response {
+    let response = Response()
+    response.result = request.input! * 2  // Example: multiply input by 2
+    return response
+  }
+}
+
+@UIApplicationMain
+@objc class AppDelegate: FlutterAppDelegate {
+  override func application(
+    _ application: UIApplication,
+    didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
+  ) -> Bool {
+    GeneratedPluginRegistrant.register(with: self)
+    
+    let controller = window?.rootViewController as! FlutterViewController
+    CalculatorApi.setUp(binaryMessenger: controller.binaryMessenger, api: CalculatorApiImpl())
+
+    return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+  }
+}
+```
+
+#### Step 5: Call native code from Flutter
+
+Now, in Flutter, you can call the native code using the generated `CalculatorApi`:
+
+```dart
+import 'pigeon.dart';
+
+void calculate() async {
+  final api = CalculatorApi();
+  final request = Request()..input = 10;
+  final response = await api.calculate(request);
+  print('Result: ${response.result}');
+}
+```
+
+In this example, we send an input value of `10`, and the native platforms (Kotlin and Swift) return the result of multiplying that value by `2`.
+
+### Enter pigeon_generator
+
+By using Pigeon, you can greatly simplify native communication in Flutter applications. It removes the need for manually writing platform channels and instead provides a strongly-typed, easy-to-maintain solution. Pigeon-generated code ensures that both the Dart and native code are in sync, reducing the chances of errors.
+
+However, when working with multiple files, it can be challenging to keep track of all the generated files and having to manually call `dart run pigeon` for each file can be time-consuming. This also becomes an issue everytime we make changes to the Pigeon file.
+
+To simplify this process, I created a package called [pigeon_generator](https://pub.dev/packages/pigeon_generator) that integrates [Pigeon](https://pub.dev/packages/pigeon) with [build_runner](https://pub.dev/packages/build_runner). This package allows us to run `dart run build_runner build` to generate the platform-specific code, and `dart run build_runner watch` to automatically run the generator whenever the Pigeon file is modified.
+
+### Using pigeon_generator
+
+Let's walk through the steps to set up and use pigeon_generator.
+
+#### Step 1: Add pigeon_generator as a dependency
+
+Add [pigeon_generator](https://pub.dev/packages/pigeon_generator) and the other dependencies to your `dev_dependencies` in the `pubspec.yaml` file:
+
+```yaml
+dev_dependencies:
+  build_runner: [version]
+  pigeon: [version]
+  pigeon_generator: [version]
+```
+
+Then, run `flutter pub get` to install the packages.
+
+#### Step 2: Create a pigeons folder
+
+Create a folder named `pigeons` in the root of your project. This folder will contain all the pigeon files.
+
+You willl also need to include this folders in the `build.yaml` file so that the `build_runner` can pick up the pigeon files.
+
+```yaml
+additional_public_assets:
+  - pigeons/**
+```
+
+You may use a different folder other than `pigeons` but you will need to update the `build.yaml` file accordingly. If you are using a different folder, you will have to specify that folder in the build.yaml file options for the `pigeon_generator` builder. Example is as shown below:
+
+```yaml
+targets:
+  $default:
+    builders:
+      pigeon_generator:
+        options:
+          inputs: pigeons_other
+
+additional_public_assets:
+  - pigeons_other/**
+```
+
+#### Step 3: Run the generator
+
+Run `dart run build_runner build` to generate the platform-specific code. This will create the necessary files in the `lib` folder for Dart and the native platforms.
+
+To automatically run the generator whenever the Pigeon file is modified, run `dart run build_runner watch`.
+
+That's all you need to do! The generator will pick up which platforms your project supports by checking for the existence of the platform's folder in the root project and generate the necessary files. You can however specify custom options by passing them to the `build.yaml` file. To learn more, check out the [pigeon_generator](https://pub.dev/packages/pigeon_generator) package.
+
+### Conclusion
+
+We've seen how [Pigeon](https://pub.dev/packages/pigeon) by itself can greatly simplify native communication in Flutter applications. Using it with [pigeon_generator](https://pub.dev/packages/pigeon_generator) takes it a step further by automating the process of generating the platform-specific code thanks to [build_runner](https://pub.dev/packages/build_runner). This makes it easier to work with multiple files without having to manually type `dart run pigeon` for each file. It also utilizes the `watch` feature of build_runner to automatically run the generator whenever the Pigeon file is modified, ensuring that the generated code is always up-to-date.
+
