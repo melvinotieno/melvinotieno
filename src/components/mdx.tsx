@@ -2,9 +2,13 @@ import type { MDXComponents as Components } from "mdx/types";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import Prism from "prismjs";
 import "prismjs/components/prism-bash";
+import "prismjs/components/prism-dart";
 import "prismjs/components/prism-jsx";
+import "prismjs/components/prism-kotlin";
+import "prismjs/components/prism-swift";
 import "prismjs/components/prism-tsx";
 import "prismjs/components/prism-typescript";
+import "prismjs/components/prism-yaml";
 import { DetailedHTMLProps, HTMLAttributes, ReactElement } from "react";
 
 export default function MDX({
