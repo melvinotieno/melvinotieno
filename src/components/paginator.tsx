@@ -64,6 +64,8 @@ export default function Paginator({
           </Link>
         )}
 
+        {!page.prev && page.next && <div></div>}
+
         {page.next && (
           <Link
             href={page.next.link}
