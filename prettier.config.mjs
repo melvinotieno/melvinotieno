@@ -12,6 +12,7 @@ const config = {
   ],
   importOrderSeparation: true,
   importOrderSortSpecifiers: true,
+  tailwindStylesheet: "./src/app/globals.css",
   tailwindFunctions: ["clsx"],
 };
 
