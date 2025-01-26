@@ -58,7 +58,7 @@ export default function Paginator({
               &larr; Previous
             </div>
 
-            <div className="overflow-hidden text-ellipsis whitespace-nowrap text-sm">
+            <div className="overflow-hidden text-sm text-ellipsis whitespace-nowrap">
               {page.prev.title}
             </div>
           </Link>
@@ -75,7 +75,7 @@ export default function Paginator({
               Next &rarr;
             </div>
 
-            <div className="overflow-hidden text-ellipsis whitespace-nowrap text-sm">
+            <div className="overflow-hidden text-sm text-ellipsis whitespace-nowrap">
               {page.next.title}
             </div>
           </Link>
