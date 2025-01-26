@@ -1,5 +1,5 @@
 import { getBlogPosts } from "@/utilities/blog";
-import { AUTHOR_NAME, BASE_URL, BLOG_DESCRIPTION } from "@/utilities/constants";
+import { AUTHOR_NAME, BASE_URL } from "@/utilities/constants";
 
 export async function GET() {
   const blogPosts = await getBlogPosts();
@@ -25,7 +25,7 @@ export async function GET() {
       <channel>
         <title>${AUTHOR_NAME}</title>
         <link>${BASE_URL}</link>
-        <description>${BLOG_DESCRIPTION}</description>
+        <description>My thoughts on technology, software development, and more.</description>
         ${xmlItems}
       </channel>
     </rss>
