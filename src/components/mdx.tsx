@@ -36,8 +36,11 @@ export function Pre({
 }: Readonly<
   DetailedHTMLProps<HTMLAttributes<HTMLPreElement>, HTMLPreElement>
 >) {
-  const props = (children as ReactElement).props;
-  const { children: content, className } = props;
+  const { children: content, className } = (children as ReactElement).props as {
+    children: string;
+    className: string;
+  };
+
   const lang = className.replace(/language-/, "");
   const html = Prism.highlight(content, Prism.languages[lang], lang);
 
@@ -48,6 +51,4 @@ export function Pre({
   );
 }
 
-export const MDXComponents: Components = {
-  pre: Pre,
-};
+export const MDXComponents: Components = { pre: Pre };
