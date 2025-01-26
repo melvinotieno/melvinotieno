@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import Heading from "@/components/heading";
 import Paginator from "@/components/paginator";
+import { SearchParams } from "@/interfaces/params";
 import { getPaginatedProjects } from "@/utilities/projects";
 
 const PAGINATOR_LIMIT = 10;
@@ -13,12 +14,8 @@ export const metadata: Metadata = {
   keywords: ["projects", "software", "development"],
 };
 
-export default async function Page({
-  searchParams,
-}: Readonly<{
-  searchParams: { [key: string]: string | string[] | undefined };
-}>) {
-  const page = parseInt(searchParams.page as string, 10) || 1;
+export default async function Page(props: { searchParams: SearchParams }) {
+  const page = parseInt((await props.searchParams).page as string, 10) || 1;
 
   const { projects, total } = await getPaginatedProjects(page, PAGINATOR_LIMIT);
 
