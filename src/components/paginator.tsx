@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import Link from "next/link";
 
 import { ListPaginator, PagePaginator } from "@/interfaces/paginator";
@@ -18,9 +19,7 @@ export default function Paginator({
     if (list.total <= list.limit) return null;
 
     return (
-      <div
-        className={`flex justify-between${className ? " " + className : ""}`}
-      >
+      <div className={clsx("flex justify-between", className)}>
         {list.page !== 1 ? (
           <Link href={`/${list.slug}/?page=${list.page - 1}`}>
             &larr; &nbsp; Previous
@@ -47,7 +46,10 @@ export default function Paginator({
   if (page) {
     return (
       <div
-        className={`grid gap-4 sm:grid-cols-2 sm:gap-6 md:gap-8${className ? " " + className : ""}`}
+        className={clsx(
+          "grid gap-4 sm:grid-cols-2 sm:gap-6 md:gap-8",
+          className,
+        )}
       >
         {page.prev && (
           <Link
