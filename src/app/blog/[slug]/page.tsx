@@ -4,18 +4,16 @@ import { notFound } from "next/navigation";
 import Heading from "@/components/heading";
 import MDX from "@/components/mdx";
 import Paginator from "@/components/paginator";
+import { SlugParam } from "@/interfaces/params";
 import { getAdjacentBlogPosts, getBlogPost } from "@/utilities/blog";
 import { AUTHOR_NAME, BASE_URL, TWITTER_HANDLE } from "@/utilities/constants";
 import { formatDate } from "@/utilities/date";
 import { resolveImage } from "@/utilities/image";
 
-type Props = {
-  params: { slug: string };
-};
-
-export async function generateMetadata({
-  params,
-}: Readonly<Props>): Promise<Metadata | undefined> {
+export async function generateMetadata(props: {
+  params: SlugParam;
+}): Promise<Metadata | undefined> {
+  const params = await props.params;
   const post = await getBlogPost(params.slug);
 
   if (!post) return;
@@ -44,7 +42,8 @@ export async function generateMetadata({
   };
 }
 
-export default async function Blog({ params }: Readonly<Props>) {
+export default async function Blog(props: { params: SlugParam }) {
+  const params = await props.params;
   const post = await getBlogPost(params.slug);
 
   if (!post) return notFound();
