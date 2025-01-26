@@ -11,7 +11,7 @@ function getProjectsPath(): string {
   return path.join(process.cwd(), "src", "app", "projects");
 }
 
-async function readProjectsFile(): Promise<any[]> {
+async function readProjectsFile(): Promise<never[]> {
   try {
     const filePath = path.join(getProjectsPath(), "projects.json");
     const fileContent = await fs.readFile(filePath, "utf-8");
@@ -44,8 +44,7 @@ export async function getProjects(slugs: boolean = false): Promise<Project[]> {
         if (project.slug && (await projectExists(project.slug))) {
           acc.push(project);
         } else if (!slugs) {
-          const { slug, ...rest } = project;
-          acc.push(rest);
+          acc.push(project);
         }
       } else {
         let message = "Project is missing required title.";
