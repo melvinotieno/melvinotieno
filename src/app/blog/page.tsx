@@ -3,24 +3,20 @@ import Link from "next/link";
 
 import Heading from "@/components/heading";
 import Paginator from "@/components/paginator";
+import { SearchParams } from "@/interfaces/params";
 import { getPaginatedBlogPosts } from "@/utilities/blog";
-import { BLOG_DESCRIPTION } from "@/utilities/constants";
 import { formatDate } from "@/utilities/date";
 
 const PAGINATOR_LIMIT = 15;
 
 export const metadata: Metadata = {
   title: "Blog",
-  description: BLOG_DESCRIPTION,
-  keywords: ["blog", "technology", "software", "development"],
+  description: "My thoughts on technology, software development, and more.",
+  keywords: ["blog", "technology", "software", "development", "programming"],
 };
 
-export default async function Page({
-  searchParams,
-}: Readonly<{
-  searchParams: { [key: string]: string | string[] | undefined };
-}>) {
-  const page = parseInt(searchParams.page as string, 10) || 1;
+export default async function Page(props: { searchParams: SearchParams }) {
+  const page = parseInt((await props.searchParams).page as string, 10) || 1;
 
   const { posts, total } = await getPaginatedBlogPosts(page, PAGINATOR_LIMIT);
 
